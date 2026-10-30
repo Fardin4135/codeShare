@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeDrop - Temporary Code Sharing</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0b1120;
+  color: #e2e8f0;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+
+header {
+  padding: 22px 7%;
+  border-bottom: 1px solid #263449;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.logo span { color: white; }
+
+.tag {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.container {
+  max-width: 950px;
+  margin: 55px auto;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 34px;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.panel {
+  background: #131e30;
+  border: 1px solid #263449;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 22px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+input, select, textarea {
+  width: 100%;
+  background: #080f1c;
+  border: 1px solid #334155;
+  border-radius: 7px;
+  padding: 13px;
+  color: white;
+  outline: none;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #38bdf8;
+}
+
+textarea {
+  min-height: 300px;
+  resize: vertical;
+  font-family: Consolas, monospace;
+  line-height: 1.6;
+  tab-size: 4;
+}
+
+button {
+  background: #0284c7;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+button:hover { background: #0369a1; }
+
+.copy-btn { background: #16a34a; }
+.copy-btn:hover { background: #15803d; }
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.code-box {
+  background: #080f1c;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 600px;
+}
+
+pre {
+  padding: 22px;
+  color: #a5f3fc;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre;
+  overflow-x: auto;
+  user-select: text;
+  font-family: Consolas, monospace;
+}
+
+.result {
+  display: none;
+  margin-top: 20px;
+  padding: 18px;
+  background: #082f24;
+  border: 1px solid #166534;
+  border-radius: 8px;
+}
+
+.result input {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.info {
+  color: #94a3b8;
+  font-size: 13px;
+  margin-top: 15px;
+  line-height: 1.6;
+}
+
+.badge {
+  background: #164e63;
+  color: #67e8f9;
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+#error {
+  color: #fca5a5;
+  margin-top: 15px;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.hidden { display: none !important; }
+
+@media(max-width:600px) {
+  header { padding: 18px 5%; }
+  .container { margin: 30px auto; }
+  h1 { font-size: 27px; }
+  .panel { padding: 17px; }
+  .toolbar { align-items: flex-start; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">Code<span>Drop.</span></div>
+  <div class="tag">Temporary Code Sharing</div>
+</header>
+
+<div class="container">
+
+  <section id="teacher">
+
+    <h1>Share code with students.</h1>
+    <p class="subtitle">
+      Paste your code, generate a temporary link, and share it
+      with your students.
+    </p>
+
+    <div class="panel">
+
+      <label for="title">Code Title</label>
+      <input id="title" type="text"
+        placeholder="Example: HTML Registration Form">
+
+      <label for="language">Programming Language</label>
+      <select id="language">
+        <option>HTML</option>
+        <option>CSS</option>
+        <option>JavaScript</option>
+        <option>Python</option>
+        <option>C</option>
+        <option>C++</option>
+        <option>Java</option>
+        <option>React</option>
+        <option>SQL</option>
+        <option>Other</option>
+      </select>
+
+      <label for="code">Paste Your Code</label>
+      <textarea id="code"
+        placeholder="Paste your code here..."></textarea>
+
+      <label for="expiry">Link Expiration</label>
+      <select id="expiry">
+        <option value="1">1 Hour</option>
+        <option value="6">6 Hours</option>
+        <option value="24" selected>24 Hours</option>
+        <option value="72">3 Days</option>
+        <option value="168">7 Days</option>
+      </select>
+
+      <button onclick="generateLink()">
+        Generate Share Link →
+      </button>
+
+      <p id="error"></p>
+
+      <div class="result" id="result">
+        <strong>Share link generated successfully!</strong>
+        <input id="shareLink" readonly>
+        <button class="copy-btn" onclick="copyLink()">
+          Copy Share Link
+        </button>
+        <p class="info">
+          Send this link to your students. They can view and
+          copy the code until the link expires.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="student" class="hidden">
+
+    <h1 id="studentTitle">Shared Code</h1>
+
+    <p class="subtitle">
+      Your instructor has shared this code with you.
+      You can view and copy it below.
+    </p>
+
+    <div class="panel">
+
+      <div class="toolbar">
+        <span class="badge" id="studentLanguage"></span>
+        <button class="copy-btn" onclick="copyCode()">
+          Copy Code
+        </button>
+      </div>
+
+      <div class="code-box">
+        <pre id="studentCode"></pre>
+      </div>
+
+      <p class="info" id="expiryInfo"></p>
+
+      <p class="info">
+        <strong>Read-only mode:</strong> You can copy the code,
+        but this page does not provide editing or deletion controls.
+      </p>
+
+    </div>
+  </section>
+
+  <section id="expired" class="hidden">
+    <div class="panel">
+      <h1>Link unavailable!</h1>
+      <p class="subtitle" id="expiredMessage">
+        This code link has expired or is invalid.
+      </p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  CodeDrop © 2026 | Temporary Code Sharing for Classrooms
+</footer>
+
+<script>
+
+function encodeData(data) {
+  const bytes = new TextEncoder().encode(data);
+  let binary = "";
+  bytes.forEach(byte => binary += String.fromCharCode(byte));
+
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+function decodeData(data) {
+  const base64 = data
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
+
+  const binary = atob(
+    base64 + "=".repeat((4 - base64.length % 4) % 4)
+  );
+
+  const bytes = Uint8Array.from(
+    binary, char => char.charCodeAt(0)
+  );
+
+  return new TextDecoder().decode(bytes);
+}
+
+function generateLink() {
+  const title = document.getElementById("title").value.trim();
+  const code = document.getElementById("code").value;
+  const language = document.getElementById("language").value;
+  const hours = Number(document.getElementById("expiry").value);
+
+  const error = document.getElementById("error");
+  error.textContent = "";
+
+  if (!title || !code.trim()) {
+    error.textContent = "Please enter a title and paste your code.";
+    return;
+  }
+
+  const expiry = Date.now() + hours * 60 * 60 * 1000;
+
+  const data = {
+    title,
+    code,
+    language,
+    expiry
+  };
+
+  const encoded = encodeData(JSON.stringify(data));
+
+  const link = new URL(window.location.href);
+  link.hash = "view=" + encoded;
+
+  if (link.href.length > 12000) {
+    error.textContent =
+      "This code is too large for a share link. Use a server-based version.";
+    return;
+  }
+
+  document.getElementById("shareLink").value = link.href;
+  document.getElementById("result").style.display = "block";
+}
+
+async function copyLink() {
+  const link = document.getElementById("shareLink").value;
+  await copyText(link);
+}
+
+async function copyCode() {
+  const code = document.getElementById("studentCode").textContent;
+  await copyText(code);
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("Copied successfully!");
+  } catch {
+    const area = document.createElement("textarea");
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+    alert("Copied successfully!");
+  }
+}
+
+function loadPage() {
+  const hash = window.location.hash;
+
+  if (!hash.startsWith("#view=")) return;
+
+  document.getElementById("teacher").classList.add("hidden");
+
+  try {
+    const encoded = hash.substring(6);
+    const data = JSON.parse(decodeData(encoded));
+
+    if (
+      !data.title ||
+      typeof data.code !== "string" ||
+      !data.expiry ||
+      !Number.isFinite(data.expiry)
+    ) {
+      throw new Error("Invalid data");
+    }
+
+    if (Date.now() > data.expiry) {
+      throw new Error("expired");
+    }
+
+    document.getElementById("student").classList.remove("hidden");
+
+    document.getElementById("studentTitle").textContent = data.title;
+    document.getElementById("studentLanguage").textContent =
+      data.language || "Code";
+
+    document.getElementById("studentCode").textContent = data.code;
+
+    document.getElementById("expiryInfo").textContent =
+      "Expires: " + new Date(data.expiry).toLocaleString();
+
+  } catch (error) {
+    document.getElementById("expired").classList.remove("hidden");
+
+    document.getElementById("expiredMessage").textContent =
+      error.message === "expired"
+        ? "This code sharing link has expired."
+        : "This code link is invalid.";
+  }
+}
+
+loadPage();
+
+</script>
+
+</body>
+</html>
